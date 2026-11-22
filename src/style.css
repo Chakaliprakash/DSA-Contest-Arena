@@ -6,3 +6,10 @@
 
 /* Mobile filter controls: make the complete filter row easy to tap. */
 @media(max-width:700px){.filters{gap:10px}.select-wrap{height:48px;padding:0 12px}.select-wrap select{font-size:13px}.select-wrap:focus-within{border-color:#7774d2;box-shadow:0 0 0 3px #7774d21a}}
+
+/* Quick platform shortcuts below the filters */
+.quick-platforms{display:flex;flex-wrap:wrap;gap:9px;margin:-2px 0 16px}
+.quick-platform{min-height:44px;padding:0 18px;border:1px solid #e3e7ef;border-radius:9px;background:#fff;color:#596477;font:600 12px ui-sans-serif,system-ui,sans-serif;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .15s,border-color .15s,color .15s}
+.quick-platform:active{transform:scale(.98)}
+.quick-platform.active{background:#efefff;border-color:#c9c8f4;color:#5754c7}
+@media(max-width:700px){.quick-platforms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 15px}.quick-platform{min-height:48px;padding:0 6px;font-size:11px;white-space:nowrap}}
