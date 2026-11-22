@@ -1,9 +1,224 @@
-import{mkdir,writeFile}from'node:fs/promises';
-const now=new Date().toISOString();const all=[];const problems=[];const errors=[];
-async function get(url,options={}){const r=await fetch(url,{headers:{'User-Agent':'DSA-Contest-Arena/1.0','Content-Type':'application/json',...(options.headers||{})},...options});if(!r.ok)throw new Error(url+' returned '+r.status);return r.json()}
-function cfDivision(name){const normalized=name.replace(/\s+/g,' ');if(/Div\.?\s*1\s*\+\s*Div\.?\s*2/i.test(normalized))return'Div. 1 + Div. 2';const matches=[...normalized.matchAll(/Div\.?\s*([1-4])/gi)];if(matches.length)return'Div. '+matches[matches.length-1][1];const legacy=normalized.match(/\bDiv(?:ision)?\s*([1-4])\s*Only\b/i);return legacy?'Div. '+legacy[1]:''}
-async function codeforces(){try{const data=await get('https://codeforces.com/api/contest.list?gym=false');if(data.status!=='OK')throw Error(data.comment||'Codeforces API error');for(const c of data.result){all.push({id:String(c.id),platform:'Codeforces',name:c.name,startTimeSeconds:c.startTimeSeconds,phase:c.phase,durationSeconds:c.durationSeconds,division:cfDivision(c.name),url:'https://codeforces.com/contest/'+c.id})}
- const p=await get('https://codeforces.com/api/problemset.problems');if(p.status==='OK'){for(const x of p.result.problems){const id='cf-'+(x.contestId||'')+'-'+(x.index||'')+'-'+(x.name||'').slice(0,30);problems.push({id,platform:'Codeforces',contestId:String(x.contestId),name:x.name,index:x.index,rating:x.rating||null,tags:x.tags||[],url:'https://codeforces.com/problemset/problem/'+x.contestId+'/'+x.index})}}}catch(e){errors.push('Codeforces: '+e.message)}}
-async function codechef(){try{const d=await get('https://www.codechef.com/api/list/contests/all?sort_by=START&sorting_order=desc&offset=0&mode=all');const list=d.contests||d.future_contests||[];for(const c of list){const code=c.contest_code||c.code||c.contestCode;if(!code)continue;const start=Date.parse(c.contest_start_date||c.start_date||c.startDate||'');all.push({id:'cc-'+code,platform:'CodeChef',name:c.contest_name||c.name||code,startTimeSeconds:Number.isFinite(start)?Math.floor(start/1000):null,phase:(c.contest_status||'').toLowerCase().includes('upcoming')?'BEFORE':'FINISHED',division:'',url:'https://www.codechef.com/'+code})}}catch(e){errors.push('CodeChef: '+e.message)}}
-async function leetcode(){try{const d=await get('https://leetcode.com/contest/api/list/');const list=Array.isArray(d)?d:(d.contests||d.data||[]);for(const c of list){const title=c.title||c.name;if(!title)continue;const slug=c.titleSlug||c.slug||'';const start=Number(c.startTime||c.start_time||0);all.push({id:'lc-'+(c.id||slug||title),platform:'LeetCode',name:title,startTimeSeconds:start>1e12?Math.floor(start/1000):start||null,phase:(start*1000>Date.now()?'BEFORE':'FINISHED'),division:'',url:'https://leetcode.com/contest/'+(slug||'')+'/'})}}catch(e){errors.push('LeetCode: '+e.message)}}
-await Promise.all([codeforces(),codechef(),leetcode()]);all.sort((a,b)=>(b.startTimeSeconds||0)-(a.startTimeSeconds||0));await mkdir('public/data',{recursive:true});await writeFile('public/data/contests.json',JSON.stringify({lastSynced:now,contests:all,sourceErrors:errors},null,2));await writeFile('public/data/problems.json',JSON.stringify({lastSynced:now,problems},null,2));console.log('Synced',all.length,'contests and',problems.length,'problems. Source warnings:',errors);
+import { mkdir, writeFile } from 'node:fs/promises';
+
+const MIN_START_SECONDS = Math.floor(Date.parse('2026-08-01T00:00:00Z') / 1000);
+const MIN_START_ISO = '2026-08-01T00:00:00Z';
+const nowSeconds = Math.floor(Date.now() / 1000);
+const lastSynced = new Date().toISOString();
+
+const contests = [];
+const problems = [];
+const sourceErrors = [];
+
+async function requestJson(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; DSA-Contest-Arena/1.0)',
+      Accept: 'application/json, text/plain, */*',
+      ...(options.headers || {}),
+    },
+  });
+  if (!response.ok) throw new Error(\`\${url} returned HTTP \${response.status}\`);
+  return response.json();
+}
+
+function addContest(contest) {
+  if (!contest.startTimeSeconds || contest.startTimeSeconds < MIN_START_SECONDS) return;
+  contests.push(contest);
+}
+
+function phaseFromTimes(start, duration) {
+  if (start > nowSeconds) return 'BEFORE';
+  if (start + (duration || 0) > nowSeconds) return 'CODING';
+  return 'FINISHED';
+}
+
+function cfDivision(name = '') {
+  const normalized = name.replace(/\s+/g, ' ');
+  if (/Div\.?\s*1\s*\+\s*Div\.?\s*2/i.test(normalized)) return 'Div. 1 + Div. 2';
+  const matches = [...normalized.matchAll(/Div\.?\s*([1-4])/gi)];
+  if (matches.length) return 'Div. ' + matches[matches.length - 1][1];
+  return '';
+}
+
+async function syncCodeforces() {
+  try {
+    const data = await requestJson('https://codeforces.com/api/contest.list?gym=false');
+    if (data.status !== 'OK') throw new Error(data.comment || 'Codeforces contest API error');
+
+    const eligibleIds = new Set();
+    for (const c of data.result) {
+      if (!c.startTimeSeconds || c.startTimeSeconds < MIN_START_SECONDS) continue;
+      eligibleIds.add(String(c.id));
+      addContest({
+        id: String(c.id),
+        platform: 'Codeforces',
+        name: c.name,
+        startTimeSeconds: c.startTimeSeconds,
+        phase: c.phase,
+        durationSeconds: c.durationSeconds,
+        division: cfDivision(c.name),
+        url: \`https://codeforces.com/contest/\${c.id}\`,
+      });
+    }
+
+    const problemData = await requestJson('https://codeforces.com/api/problemset.problems');
+    if (problemData.status !== 'OK') throw new Error(problemData.comment || 'Codeforces problemset API error');
+
+    for (const p of problemData.result.problems) {
+      if (!eligibleIds.has(String(p.contestId))) continue;
+      problems.push({
+        id: \`cf-\${p.contestId}-\${p.index}-\${(p.name || '').slice(0, 30)}\`,
+        platform: 'Codeforces',
+        contestId: String(p.contestId),
+        name: p.name,
+        index: p.index,
+        rating: p.rating || null,
+        tags: p.tags || [],
+        url: \`https://codeforces.com/problemset/problem/\${p.contestId}/\${p.index}\`,
+      });
+    }
+  } catch (error) {
+    sourceErrors.push('Codeforces: ' + error.message);
+  }
+}
+
+function addCodeChefContest(c) {
+  const start = Date.parse(c.contest_start_date_iso || c.contest_start_date || '');
+  if (!Number.isFinite(start)) return;
+  const startSeconds = Math.floor(start / 1000);
+  const durationSeconds = Number(c.contest_duration || 0) * 60;
+  const code = c.contest_code || c.code;
+  if (!code) return;
+
+  addContest({
+    id: 'cc-' + code,
+    platform: 'CodeChef',
+    name: c.contest_name || code,
+    startTimeSeconds: startSeconds,
+    phase: phaseFromTimes(startSeconds, durationSeconds),
+    durationSeconds,
+    division: '',
+    url: 'https://www.codechef.com/' + code,
+  });
+}
+
+async function syncCodeChef() {
+  try {
+    const liveAndFuture = await requestJson('https://www.codechef.com/api/list/contests/all');
+    for (const c of [
+      ...(liveAndFuture.present_contests || []),
+      ...(liveAndFuture.future_contests || []),
+    ]) addCodeChefContest(c);
+
+    // The past endpoint is paginated in batches of 20. Read newest-first
+    // until the last row on a page is older than the requested start date.
+    let reachedStartDate = false;
+    for (let offset = 0; offset <= 400 && !reachedStartDate; offset += 20) {
+      const url = \`https://www.codechef.com/api/list/contests/past?sort_by=START&sorting_order=desc&offset=\${offset}&mode=all\`;
+      const page = await requestJson(url);
+      const rows = page.contests || [];
+      if (!rows.length) break;
+
+      for (const c of rows) addCodeChefContest(c);
+
+      const last = rows[rows.length - 1];
+      const lastStart = Date.parse(last.contest_start_date_iso || last.contest_start_date || '');
+      if (Number.isFinite(lastStart) && lastStart < Date.parse(MIN_START_ISO)) {
+        reachedStartDate = true;
+      }
+      if (rows.length < 20) break;
+    }
+    if (!reachedStartDate) {
+      sourceErrors.push('CodeChef: archive pagination ended before reaching 1 August 2026; verify historical coverage.');
+    }
+  } catch (error) {
+    sourceErrors.push('CodeChef: ' + error.message);
+  }
+}
+
+async function syncLeetCode() {
+  const query = 'query { allContests { title titleSlug startTime duration } }';
+  let data;
+
+  try {
+    data = await requestJson('https://leetcode.com/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Referer: 'https://leetcode.com/contest/',
+      },
+      body: JSON.stringify({ query }),
+    });
+  } catch (postError) {
+    // GET fallback helps when an environment blocks POST requests to GraphQL.
+    try {
+      const url = 'https://leetcode.com/graphql?query=' + encodeURIComponent(query);
+      data = await requestJson(url, { headers: { Referer: 'https://leetcode.com/contest/' } });
+    } catch (getError) {
+      throw new Error(\`GraphQL POST failed (\${postError.message}); GET fallback failed (\${getError.message})\`);
+    }
+  }
+
+  const list = data?.data?.allContests;
+  if (!Array.isArray(list)) {
+    const detail = data?.errors?.map(e => e.message).join('; ');
+    throw new Error(detail || 'GraphQL response did not contain data.allContests');
+  }
+
+  for (const c of list) {
+    const start = Number(c.startTime);
+    const duration = Number(c.duration || 0);
+    if (!start || !c.titleSlug) continue;
+    addContest({
+      id: 'lc-' + c.titleSlug,
+      platform: 'LeetCode',
+      name: c.title,
+      startTimeSeconds: start,
+      phase: phaseFromTimes(start, duration),
+      durationSeconds: duration,
+      division: '',
+      url: 'https://leetcode.com/contest/' + c.titleSlug + '/',
+    });
+  }
+}
+
+await Promise.all([
+  syncCodeforces(),
+  syncCodeChef(),
+  syncLeetCode().catch(error => sourceErrors.push('LeetCode: ' + error.message)),
+]);
+
+// Deduplicate by platform + URL, keeping the most complete/latest record.
+const unique = new Map();
+for (const c of contests) {
+  const key = c.platform + '|' + c.url;
+  const existing = unique.get(key);
+  if (!existing || (c.durationSeconds && !existing.durationSeconds)) unique.set(key, c);
+}
+const finalContests = [...unique.values()].sort((a, b) => b.startTimeSeconds - a.startTimeSeconds);
+
+await mkdir('public/data', { recursive: true });
+await writeFile('public/data/contests.json', JSON.stringify({
+  lastSynced,
+  rangeStart: MIN_START_ISO,
+  contests: finalContests,
+  sourceCounts: finalContests.reduce((counts, c) => {
+    counts[c.platform] = (counts[c.platform] || 0) + 1;
+    return counts;
+  }, {}),
+  sourceErrors,
+}, null, 2));
+
+await writeFile('public/data/problems.json', JSON.stringify({
+  lastSynced,
+  rangeStart: MIN_START_ISO,
+  problems,
+}, null, 2));
+
+console.log(\`Synced \${finalContests.length} contests since 2026-08-01 and \${problems.length} Codeforces problems.\`);
+console.log('Platform counts:', finalContests.reduce((counts, c) => {
+  counts[c.platform] = (counts[c.platform] || 0) + 1;
+  return counts;
+}, {}));
+console.log('Source warnings:', sourceErrors);
