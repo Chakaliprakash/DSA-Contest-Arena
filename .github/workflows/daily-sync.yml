@@ -1,5 +1,7 @@
 name: Daily contest sync
 on:
+  push:
+    branches: [main]
   schedule:
     - cron: '17 1 * * *'
   workflow_dispatch:
