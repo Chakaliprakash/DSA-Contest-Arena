@@ -10,16 +10,35 @@ const problems = [];
 const sourceErrors = [];
 
 async function requestJson(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; DSA-Contest-Arena/1.0)',
-      Accept: 'application/json, text/plain, */*',
-      ...(options.headers || {}),
-    },
-  });
-  if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
-  return response.json();
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; DSA-Contest-Arena/1.0)',
+          Accept: 'application/json, text/plain, */*',
+          ...(options.headers || {}),
+        },
+      });
+      if (!response.ok) {
+        const error = new Error(`${url} returned HTTP ${response.status}`);
+        if (response.status < 500 && response.status !== 429) throw error;
+        lastError = error;
+      } else {
+        return await response.json();
+      }
+    } catch (error) {
+      lastError = error;
+    } finally {
+      clearTimeout(timeout);
+    }
+    if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 1500));
+  }
+  throw new Error(`Request failed after 3 attempts: ${lastError?.message || 'unknown error'}`);
 }
 
 function addContest(contest) {
@@ -188,6 +207,25 @@ await Promise.all([
   syncCodeChef(),
   syncLeetCode().catch(error => sourceErrors.push('LeetCode: ' + error.message)),
 ]);
+
+// Never replace a known-good archive with partial results from a failed provider.
+if (sourceErrors.length) {
+  throw new Error('Sync aborted; existing datasets were preserved. ' + sourceErrors.join(' | '));
+}
+
+// Require a non-empty result from every configured contest provider.
+const countsBeforeDedup = contests.reduce((counts, contest) => {
+  counts[contest.platform] = (counts[contest.platform] || 0) + 1;
+  return counts;
+}, {});
+for (const platform of ['Codeforces', 'CodeChef', 'LeetCode']) {
+  if (!countsBeforeDedup[platform]) {
+    throw new Error(`Sync aborted: ${platform} returned zero contests; existing datasets were preserved.`);
+  }
+}
+if (!problems.length) {
+  throw new Error('Sync aborted: Codeforces problem index is empty; existing datasets were preserved.');
+}
 
 // Deduplicate by platform + URL, keeping the most complete/latest record.
 const unique = new Map();
