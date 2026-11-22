@@ -13,3 +13,12 @@
 .quick-platform:active{transform:scale(.98)}
 .quick-platform.active{background:#efefff;border-color:#c9c8f4;color:#5754c7}
 @media(max-width:700px){.quick-platforms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 15px}.quick-platform{min-height:48px;padding:0 6px;font-size:11px;white-space:nowrap}}
+
+/* Sidebar platform shortcuts: clear selected state and reliable mobile tapping. */
+.platform-link{min-height:46px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:background .15s,color .15s;}
+.platform-link:hover,.platform-link:focus-visible{background:#f6f7fc;outline:none;}
+.platform-link.active{background:#efefff;color:#5754c7;}
+.platform-link.active .platform-count{color:#5754c7;}
+.platform-name{margin-left:0!important;color:inherit!important;font-size:inherit!important;}
+.platform-count{margin-left:auto!important;color:#9aa2b0!important;font-size:11px!important;}
+@media(max-width:700px){.platform-link{min-height:52px;padding:0 14px;font-size:14px;border-radius:11px;}}
