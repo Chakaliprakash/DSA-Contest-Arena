@@ -126,3 +126,14 @@ footer span{min-width:0;overflow-wrap:anywhere}
 .notification-item.warning b{color:#b53c36}
 .notification-enable,.notification-refresh{border:1px solid #dce5dd;background:#f7faf7;color:#285b40;border-radius:8px;padding:8px 10px;margin:10px 7px 0 0;font-size:12px;font-weight:600;cursor:pointer}
 @media(max-width:600px){.notification-panel{right:10px;top:62px}}
+
+/* Notification controls: dismiss individual items and clear the current list. */
+.notification-permission{padding:8px 10px;margin:0 0 8px;border-radius:7px;background:#f3f7f4;color:#55715f;font-size:11px}
+.notification-item-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.notification-delete{width:26px;height:26px;flex:0 0 26px;border:0;border-radius:6px;background:#f5f6f5;color:#7b8580;font-size:19px;line-height:1;cursor:pointer}
+.notification-delete:hover{background:#fff0ef;color:#b42318}
+.notification-empty{padding:18px 8px;text-align:center;color:#8b948e;font-size:12px}
+.notification-panel-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.notification-panel-actions .notification-enable,.notification-panel-actions .notification-refresh{margin:0;min-height:36px}
+.notification-clear-all{width:100%;margin-top:13px;padding:10px;border:1px solid #f0d8d6;border-radius:8px;background:#fff8f7;color:#a33d36;font-size:12px;font-weight:700;cursor:pointer}
+.notification-clear-all:hover{background:#fff0ee}
