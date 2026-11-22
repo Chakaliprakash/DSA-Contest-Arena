@@ -1,4 +1,5 @@
 name: Daily contest sync
+
 on:
   push:
     branches: [main]
@@ -6,27 +7,63 @@ on:
       - 'scripts/sync.mjs'
       - '.github/workflows/daily-sync.yml'
   schedule:
+    # 01:17 UTC = 06:47 India Standard Time
     - cron: '17 1 * * *'
   workflow_dispatch:
+
 permissions:
   contents: write
+
 concurrency:
   group: contest-archive-sync
   cancel-in-progress: false
+
 jobs:
   sync:
+    name: Fetch, validate and publish contest data
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout main
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: main
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
+
       - name: Fetch contest archives
         run: node scripts/sync.mjs
-      - name: Commit updated data
+
+      - name: Validate generated datasets
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+          const contests = JSON.parse(await readFile('public/data/contests.json', 'utf8'));
+          const problems = JSON.parse(await readFile('public/data/problems.json', 'utf8'));
+          if (!Array.isArray(contests.contests) || !Array.isArray(problems.problems)) throw new Error('Dataset arrays are missing');
+          if (!contests.lastSynced || contests.lastSynced !== problems.lastSynced) throw new Error('Dataset timestamps do not match');
+          if (contests.rangeStart !== '2026-08-01T00:00:00Z' || problems.rangeStart !== contests.rangeStart) throw new Error('Unexpected archive boundary');
+          if (contests.sourceErrors?.length) throw new Error('One or more providers reported errors');
+          for (const platform of ['Codeforces', 'CodeChef', 'LeetCode']) {
+            if (!(contests.sourceCounts?.[platform] > 0)) throw new Error(`Missing contest data for ${platform}`);
+          }
+          if (problems.problems.length === 0) throw new Error('Problem index is empty');
+          console.log('Validated', contests.contests.length, 'contests and', problems.problems.length, 'problems');
+          console.log('Platform counts:', contests.sourceCounts);
+          NODE
+
+      - name: Commit only validated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data
-          git diff --cached --quiet || git commit -m "chore: daily contest archive sync"
-          git push
+          if git diff --cached --quiet; then
+            echo "No dataset changes; nothing to publish."
+            exit 0
+          fi
+          git commit -m "chore: daily contest archive sync"
+          git push origin HEAD:main
