@@ -91,3 +91,6 @@ footer span{min-width:0;overflow-wrap:anywhere}
   .select-wrap select{font-size:11px}
   .quick-platform{font-size:10px}
 }
+
+/* Keep the pagination action readable when the header refresh button becomes icon-only on phones. */
+@media(max-width:700px){.load-more{font-size:11px!important;padding:10px 18px!important;min-height:40px}}
