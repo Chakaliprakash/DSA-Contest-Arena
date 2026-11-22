@@ -22,3 +22,10 @@
 .platform-name{margin-left:0!important;color:inherit!important;font-size:inherit!important;}
 .platform-count{margin-left:auto!important;color:#9aa2b0!important;font-size:11px!important;}
 @media(max-width:700px){.platform-link{min-height:52px;padding:0 14px;font-size:14px;border-radius:11px;}}
+
+/* Per-contest completion marker. Saved separately from problem completion. */
+.card-actions{display:flex;align-items:center;gap:9px}
+.complete-mark{width:30px;height:30px;display:grid;place-items:center;border:1px solid transparent;border-radius:8px;background:transparent;color:#b2b8c4;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s,border-color .15s}
+.complete-mark:hover,.complete-mark:focus-visible{background:#f3f8f5;border-color:#d8eee2;outline:none;color:#32966a}
+.complete-mark.done{background:#eaf8f1;border-color:#d4efdf;color:#269b69}
+.complete-mark:active{transform:scale(.94)}
