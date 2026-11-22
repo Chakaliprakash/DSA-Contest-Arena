@@ -18,7 +18,7 @@ async function requestJson(url, options = {}) {
       ...(options.headers || {}),
     },
   });
-  if (!response.ok) throw new Error(\`\${url} returned HTTP \${response.status}\`);
+  if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`);
   return response.json();
 }
 
@@ -58,7 +58,7 @@ async function syncCodeforces() {
         phase: c.phase,
         durationSeconds: c.durationSeconds,
         division: cfDivision(c.name),
-        url: \`https://codeforces.com/contest/\${c.id}\`,
+        url: `https://codeforces.com/contest/${c.id}`,
       });
     }
 
@@ -68,14 +68,14 @@ async function syncCodeforces() {
     for (const p of problemData.result.problems) {
       if (!eligibleIds.has(String(p.contestId))) continue;
       problems.push({
-        id: \`cf-\${p.contestId}-\${p.index}-\${(p.name || '').slice(0, 30)}\`,
+        id: `cf-${p.contestId}-${p.index}-${(p.name || '').slice(0, 30)}`,
         platform: 'Codeforces',
         contestId: String(p.contestId),
         name: p.name,
         index: p.index,
         rating: p.rating || null,
         tags: p.tags || [],
-        url: \`https://codeforces.com/problemset/problem/\${p.contestId}/\${p.index}\`,
+        url: `https://codeforces.com/problemset/problem/${p.contestId}/${p.index}`,
       });
     }
   } catch (error) {
@@ -115,7 +115,7 @@ async function syncCodeChef() {
     // until the last row on a page is older than the requested start date.
     let reachedStartDate = false;
     for (let offset = 0; offset <= 400 && !reachedStartDate; offset += 20) {
-      const url = \`https://www.codechef.com/api/list/contests/past?sort_by=START&sorting_order=desc&offset=\${offset}&mode=all\`;
+      const url = `https://www.codechef.com/api/list/contests/past?sort_by=START&sorting_order=desc&offset=${offset}&mode=all`;
       const page = await requestJson(url);
       const rows = page.contests || [];
       if (!rows.length) break;
@@ -156,7 +156,7 @@ async function syncLeetCode() {
       const url = 'https://leetcode.com/graphql?query=' + encodeURIComponent(query);
       data = await requestJson(url, { headers: { Referer: 'https://leetcode.com/contest/' } });
     } catch (getError) {
-      throw new Error(\`GraphQL POST failed (\${postError.message}); GET fallback failed (\${getError.message})\`);
+      throw new Error(`GraphQL POST failed (${postError.message}); GET fallback failed (${getError.message})`);
     }
   }
 
@@ -216,7 +216,7 @@ await writeFile('public/data/problems.json', JSON.stringify({
   problems,
 }, null, 2));
 
-console.log(\`Synced \${finalContests.length} contests since 2026-08-01 and \${problems.length} Codeforces problems.\`);
+console.log(`Synced ${finalContests.length} contests since 2026-08-01 and ${problems.length} Codeforces problems.`);
 console.log('Platform counts:', finalContests.reduce((counts, c) => {
   counts[c.platform] = (counts[c.platform] || 0) + 1;
   return counts;
