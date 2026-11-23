@@ -7,12 +7,12 @@ on:
       - 'scripts/sync.mjs'
       - '.github/workflows/daily-sync.yml'
   schedule:
-    # Primary run at 06:47 IST, with hourly fallback attempts through 09:47 IST.
+    # Primary run at 07:32 IST, with hourly fallback attempts through 10:32 IST.
     # The guard below ensures only one successful sync per India calendar day.
-    - cron: '17 1 * * *'
-    - cron: '17 2 * * *'
-    - cron: '17 3 * * *'
-    - cron: '17 4 * * *'
+    - cron: '2 2 * * *'
+    - cron: '2 3 * * *'
+    - cron: '2 4 * * *'
+    - cron: '2 5 * * *'
   workflow_dispatch:
 
 permissions:
