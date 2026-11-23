@@ -137,3 +137,6 @@ footer span{min-width:0;overflow-wrap:anywhere}
 .notification-panel-actions .notification-enable,.notification-panel-actions .notification-refresh{margin:0;min-height:36px}
 .notification-clear-all{width:100%;margin-top:13px;padding:10px;border:1px solid #f0d8d6;border-radius:8px;background:#fff8f7;color:#a33d36;font-size:12px;font-weight:700;cursor:pointer}
 .notification-clear-all:hover{background:#fff0ee}
+
+.run-sync{display:flex;align-items:center;gap:7px;border:1px solid #d9e8df;background:#eff8f2;color:#286744;border-radius:8px;padding:9px 12px;font:700 11px ui-sans-serif,system-ui,sans-serif;cursor:pointer;white-space:nowrap}.run-sync:disabled{opacity:.6;cursor:wait}
+@media(max-width:700px){.run-sync{font-size:0;padding:9px}.run-sync svg{width:16px;height:16px}.top-actions{gap:6px}}
