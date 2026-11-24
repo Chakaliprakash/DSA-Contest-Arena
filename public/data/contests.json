@@ -1,7 +1,17 @@
 {
-  "lastSynced": "2026-11-23T01:59:00.614Z",
+  "lastSynced": "2026-11-24T12:21:48.802Z",
   "rangeStart": "2026-08-01T00:00:00Z",
   "contests": [
+    {
+      "id": "2293",
+      "platform": "Codeforces",
+      "name": "Educational Codeforces Round 197 (Rated for Div. 2)",
+      "startTimeSeconds": 1797258900,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "Div. 2",
+      "url": "https://codeforces.com/contest/2293"
+    },
     {
       "id": "2282",
       "platform": "Codeforces",
@@ -53,6 +63,16 @@
       "url": "https://leetcode.com/contest/weekly-contest-530/"
     },
     {
+      "id": "2292",
+      "platform": "Codeforces",
+      "name": "Codeforces Round 1138 (Div. 3)",
+      "startTimeSeconds": 1795790100,
+      "phase": "BEFORE",
+      "durationSeconds": 8100,
+      "division": "Div. 3",
+      "url": "https://codeforces.com/contest/2292"
+    },
+    {
       "id": "cc-START266",
       "platform": "CodeChef",
       "name": "Starters 266",
@@ -67,7 +87,7 @@
       "platform": "CodeChef",
       "name": "Monday Munch - DSA Challenge 030 (Rated)",
       "startTimeSeconds": 1795440600,
-      "phase": "BEFORE",
+      "phase": "FINISHED",
       "durationSeconds": 10800,
       "division": "",
       "url": "https://www.codechef.com/DSAMONDAY030"
@@ -1134,7 +1154,7 @@
     }
   ],
   "sourceCounts": {
-    "Codeforces": 39,
+    "Codeforces": 41,
     "LeetCode": 28,
     "CodeChef": 46
   },

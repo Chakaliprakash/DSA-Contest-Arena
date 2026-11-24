@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-11-23T01:59:00.614Z",
+  "lastSynced": "2026-11-24T12:21:48.802Z",
   "rangeStart": "2026-08-01T00:00:00Z",
   "problems": [
     {
@@ -172,7 +172,6 @@
       "tags": [
         "data structures",
         "greedy",
-        "meet-in-the-middle",
         "sortings",
         "two pointers"
       ],
@@ -187,8 +186,7 @@
       "rating": null,
       "tags": [
         "binary search",
-        "data structures",
-        "divide and conquer"
+        "data structures"
       ],
       "url": "https://codeforces.com/problemset/problem/2289/C"
     },
@@ -213,7 +211,8 @@
       "index": "A",
       "rating": null,
       "tags": [
-        "math"
+        "math",
+        "number theory"
       ],
       "url": "https://codeforces.com/problemset/problem/2289/A"
     },
@@ -278,8 +277,10 @@
       "rating": null,
       "tags": [
         "binary search",
+        "brute force",
         "fft",
         "hashing",
+        "probabilities",
         "strings"
       ],
       "url": "https://codeforces.com/problemset/problem/2287/D"
