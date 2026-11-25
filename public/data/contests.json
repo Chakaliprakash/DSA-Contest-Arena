@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-11-24T12:21:48.802Z",
+  "lastSynced": "2026-11-25T11:08:25.545Z",
   "rangeStart": "2026-08-01T00:00:00Z",
   "contests": [
     {
@@ -75,7 +75,7 @@
     {
       "id": "cc-START266",
       "platform": "CodeChef",
-      "name": "Starters 266",
+      "name": "Starters 266 (Rated till 5 Star)",
       "startTimeSeconds": 1795617000,
       "phase": "BEFORE",
       "durationSeconds": 7200,
