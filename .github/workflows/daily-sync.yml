@@ -41,6 +41,7 @@ jobs:
 
       - name: Skip if already synced today (IST)
         id: guard
+        if: github.event_name == 'schedule'
         run: |
           node --input-type=module <<'NODE'
           import { readFile } from 'node:fs/promises';
