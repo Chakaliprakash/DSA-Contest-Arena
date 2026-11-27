@@ -159,14 +159,14 @@ async function syncCodeChef() {
 
 async function syncCodeChefProblems() {
   const limit = 1000;
-  const first = await requestJson('https://www.codechef.com/api/list/problems?limit=' + limit + '&page=1');
+  const first = await requestJson('https://www.codechef.com/api/list/problems?limit=' + limit + '&page=0');
   if (first.status !== 'success' || !Array.isArray(first.data)) {
     throw new Error('CodeChef problem API returned an unexpected response');
   }
   const total = Number(first.count || 0);
   const rows = [...first.data];
   const pages = Math.ceil(total / limit);
-  for (let page = 2; page <= pages; page++) {
+  for (let page = 1; page < pages; page++) {
     await new Promise(resolve => setTimeout(resolve, 300));
     const result = await requestJson('https://www.codechef.com/api/list/problems?limit=' + limit + '&page=' + page);
     if (result.status !== 'success' || !Array.isArray(result.data) || !result.data.length) {
