@@ -142,3 +142,9 @@ footer span{min-width:0;overflow-wrap:anywhere}
 @media(max-width:700px){.run-sync{font-size:0;padding:9px}.run-sync svg{width:16px;height:16px}.top-actions{gap:6px}}
 
 .notification-section-label{font-size:10px;font-weight:800;letter-spacing:.09em;color:#718078;padding:12px 0 2px;border-top:1px solid #edf0ed;margin-top:5px}.notification-item.new-contest{background:#f8fbf8;margin:0 -6px;padding:11px 6px;border-radius:8px}.notification-item.new-contest .notification-item-title b{line-height:1.4}
+
+
+/* Compact latest-added contest label beside the practice counter. */
+.latest-added-chip{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:min(46%,420px);padding:4px 8px;border:1px solid #e6e9f4;border-radius:20px;background:#fff;color:#7b8494;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.latest-added-chip b{display:inline-block;min-width:0;overflow:hidden;text-overflow:ellipsis;color:#5754c7;font-size:9px;font-weight:700}
+@media(max-width:700px){.latest-added-chip{max-width:48%;font-size:8px;padding:4px 6px}.latest-added-chip b{font-size:8px}}
