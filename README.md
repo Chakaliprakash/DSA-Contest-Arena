@@ -14,7 +14,8 @@ A contest-first practice dashboard for Codeforces, CodeChef and LeetCode.
 - Search, bookmarks and local solved-problem tracking.
 - Unified problem index across Codeforces, CodeChef and LeetCode, with platform filters, tags and available difficulty/rating metadata.
 - Browser notifications for newly detected upcoming contests (requires permission and an open site session).
-- Daily GitHub Actions sync at 01:17 UTC, plus manual workflow dispatch.
+- Automated GitHub Actions sync: primary run at **07:32 IST**, with hourly fallback attempts at **08:32, 09:32 and 10:32 IST**. The workflow skips later attempts after one successful sync for the current India calendar day.
+- Admin-only manual sync is available from the dashboard. It requires `GITHUB_ACTIONS_TOKEN` in Vercel Production, with GitHub Actions write permission for this repository.
 
 ## Data synchronization
 Run locally:
