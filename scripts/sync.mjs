@@ -156,6 +156,87 @@ async function syncCodeChef() {
   }
 }
 
+
+async function syncCodeChefProblems() {
+  const limit = 1000;
+  const first = await requestJson('https://www.codechef.com/api/list/problems?limit=' + limit + '&page=1');
+  if (first.status !== 'success' || !Array.isArray(first.data)) {
+    throw new Error('CodeChef problem API returned an unexpected response');
+  }
+  const total = Number(first.count || 0);
+  const rows = [...first.data];
+  const pages = Math.ceil(total / limit);
+  for (let page = 2; page <= pages; page++) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const result = await requestJson('https://www.codechef.com/api/list/problems?limit=' + limit + '&page=' + page);
+    if (result.status !== 'success' || !Array.isArray(result.data) || !result.data.length) {
+      throw new Error('CodeChef problem page ' + page + ' was empty or invalid');
+    }
+    rows.push(...result.data);
+  }
+  if (total && rows.length !== total) {
+    throw new Error('CodeChef problem pagination incomplete: expected ' + total + ', received ' + rows.length);
+  }
+  for (const p of rows) {
+    if (!p.code || !p.name) continue;
+    const contestCode = p.contest_code || '';
+    const rating = Number(p.difficulty_rating);
+    problems.push({
+      id: 'cc-' + p.code,
+      platform: 'CodeChef',
+      contestId: contestCode ? 'cc-' + contestCode : null,
+      name: p.name,
+      index: p.code,
+      rating: Number.isFinite(rating) && rating > 0 ? rating : null,
+      tags: [],
+      url: 'https://www.codechef.com/problems/' + p.code,
+    });
+  }
+  if (!rows.length) throw new Error('CodeChef problem index is empty');
+}
+
+async function syncLeetCodeProblems() {
+  const limit = 100;
+  const query = 'query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {' +
+    ' problemsetQuestionList: questionList(categorySlug: $categorySlug, limit: $limit, skip: $skip, filters: $filters) {' +
+    ' total: totalNum questions: data { questionFrontendId title titleSlug difficulty topicTags { name } } } }';
+  let expectedTotal = null;
+  let fetched = 0;
+  for (let skip = 0; ; skip += limit) {
+    const variables = JSON.stringify({ categorySlug: '', skip, limit, filters: {} });
+    const url = 'https://leetcode.com/graphql?query=' + encodeURIComponent(query) +
+      '&variables=' + encodeURIComponent(variables);
+    const data = await requestJson(url, { headers: { Referer: 'https://leetcode.com/problemset/all/' } });
+    const result = data && data.data && data.data.problemsetQuestionList;
+    if (!result || !Array.isArray(result.questions)) {
+      const detail = data && data.errors ? data.errors.map(e => e.message).join('; ') : '';
+      throw new Error(detail || 'LeetCode problemset response was invalid');
+    }
+    if (expectedTotal === null) expectedTotal = Number(result.total || 0);
+    const questions = result.questions;
+    for (const q of questions) {
+      if (!q.titleSlug || !q.title) continue;
+      problems.push({
+        id: 'lc-' + q.titleSlug,
+        platform: 'LeetCode',
+        contestId: null,
+        name: q.title,
+        index: String(q.questionFrontendId || ''),
+        rating: null,
+        difficulty: q.difficulty || null,
+        tags: (q.topicTags || []).map(t => t.name).filter(Boolean),
+        url: 'https://leetcode.com/problems/' + q.titleSlug + '/',
+      });
+    }
+    fetched += questions.length;
+    if (!questions.length || fetched >= expectedTotal) break;
+    await new Promise(resolve => setTimeout(resolve, 250));
+  }
+  if (!expectedTotal || fetched !== expectedTotal) {
+    throw new Error('LeetCode problem pagination incomplete: expected ' + expectedTotal + ', received ' + fetched);
+  }
+}
+
 async function syncLeetCode() {
   const query = 'query { allContests { title titleSlug startTime duration } }';
   let data;
@@ -205,7 +286,9 @@ async function syncLeetCode() {
 await Promise.all([
   syncCodeforces(),
   syncCodeChef(),
-  syncLeetCode().catch(error => sourceErrors.push('LeetCode: ' + error.message)),
+  syncCodeChefProblems().catch(error => sourceErrors.push('CodeChef problems: ' + error.message)),
+  syncLeetCode().catch(error => sourceErrors.push('LeetCode contests: ' + error.message)),
+  syncLeetCodeProblems().catch(error => sourceErrors.push('LeetCode problems: ' + error.message)),
 ]);
 
 // Never replace a known-good archive with partial results from a failed provider.
@@ -224,8 +307,21 @@ for (const platform of ['Codeforces', 'CodeChef', 'LeetCode']) {
   }
 }
 if (!problems.length) {
-  throw new Error('Sync aborted: Codeforces problem index is empty; existing datasets were preserved.');
+  throw new Error('Sync aborted: problem index is empty; existing datasets were preserved.');
 }
+for (const platform of ['Codeforces', 'CodeChef', 'LeetCode']) {
+  if (!problems.some(problem => problem.platform === platform)) {
+    throw new Error('Sync aborted: ' + platform + ' problem index is empty; existing datasets were preserved.');
+  }
+}
+const uniqueProblems = new Map();
+for (const problem of problems) {
+  const key = problem.platform + '|' + problem.id;
+  if (!uniqueProblems.has(key)) uniqueProblems.set(key, problem);
+}
+const finalProblems = [...uniqueProblems.values()].sort((a, b) =>
+  a.platform.localeCompare(b.platform) || a.name.localeCompare(b.name)
+);
 
 // Deduplicate by platform + URL, keeping the most complete/latest record.
 const unique = new Map();
@@ -251,10 +347,14 @@ await writeFile('public/data/contests.json', JSON.stringify({
 await writeFile('public/data/problems.json', JSON.stringify({
   lastSynced,
   rangeStart: MIN_START_ISO,
-  problems,
+  problems: finalProblems,
+  sourceCounts: finalProblems.reduce((counts, p) => {
+    counts[p.platform] = (counts[p.platform] || 0) + 1;
+    return counts;
+  }, {}),
 }, null, 2));
 
-console.log(`Synced ${finalContests.length} contests since 2026-08-01 and ${problems.length} Codeforces problems.`);
+console.log('Synced ' + finalContests.length + ' contests since 2026-08-01 and ' + finalProblems.length + ' problems.');
 console.log('Platform counts:', finalContests.reduce((counts, c) => {
   counts[c.platform] = (counts[c.platform] || 0) + 1;
   return counts;
