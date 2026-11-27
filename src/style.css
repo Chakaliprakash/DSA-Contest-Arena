@@ -148,3 +148,7 @@ footer span{min-width:0;overflow-wrap:anywhere}
 .latest-added-chip{display:inline-flex;align-items:center;gap:4px;min-width:0;max-width:min(46%,420px);padding:4px 8px;border:1px solid #e6e9f4;border-radius:20px;background:#fff;color:#7b8494;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .latest-added-chip b{display:inline-block;min-width:0;overflow:hidden;text-overflow:ellipsis;color:#5754c7;font-size:9px;font-weight:700}
 @media(max-width:700px){.latest-added-chip{max-width:48%;font-size:8px;padding:4px 6px}.latest-added-chip b{font-size:8px}}
+
+/* Admin-only upcoming contest registration shortcuts and local tracking. */
+.contest-card-links{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.register-link{display:inline-flex;align-items:center;gap:4px;color:#24764e;text-decoration:none;font-weight:800}.register-tracked{display:inline-flex;align-items:center;gap:4px;border:1px solid #dce8df;background:#f7faf7;color:#56715f;border-radius:6px;padding:5px 7px;font:700 9px ui-sans-serif,system-ui,sans-serif;cursor:pointer}.register-tracked.done{background:#eaf8f1;border-color:#ccebd9;color:#218454}.contest-card-links>a{display:inline-flex;align-items:center;gap:4px}
+@media(max-width:520px){.contest-card-links{gap:7px}.register-tracked{font-size:8px;padding:5px 6px}}
