@@ -78,8 +78,13 @@ jobs:
             if (!(contests.sourceCounts?.[platform] > 0)) throw new Error(`Missing contest data for ${platform}`);
           }
           if (problems.problems.length === 0) throw new Error('Problem index is empty');
+          for (const platform of ['Codeforces', 'CodeChef', 'LeetCode']) {
+            const count = problems.sourceCounts?.[platform] || 0;
+            if (count === 0) throw new Error('Missing problem data for ' + platform);
+          }
           console.log('Validated', contests.contests.length, 'contests and', problems.problems.length, 'problems');
-          console.log('Platform counts:', contests.sourceCounts);
+          console.log('Contest platform counts:', contests.sourceCounts);
+          console.log('Problem platform counts:', problems.sourceCounts);
           NODE
 
       - name: Commit only validated data
