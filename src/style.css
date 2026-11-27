@@ -140,3 +140,5 @@ footer span{min-width:0;overflow-wrap:anywhere}
 
 .run-sync{display:flex;align-items:center;gap:7px;border:1px solid #d9e8df;background:#eff8f2;color:#286744;border-radius:8px;padding:9px 12px;font:700 11px ui-sans-serif,system-ui,sans-serif;cursor:pointer;white-space:nowrap}.run-sync:disabled{opacity:.6;cursor:wait}
 @media(max-width:700px){.run-sync{font-size:0;padding:9px}.run-sync svg{width:16px;height:16px}.top-actions{gap:6px}}
+
+.notification-section-label{font-size:10px;font-weight:800;letter-spacing:.09em;color:#718078;padding:12px 0 2px;border-top:1px solid #edf0ed;margin-top:5px}.notification-item.new-contest{background:#f8fbf8;margin:0 -6px;padding:11px 6px;border-radius:8px}.notification-item.new-contest .notification-item-title b{line-height:1.4}
