@@ -12,7 +12,7 @@ A contest-first practice dashboard for Codeforces, CodeChef and LeetCode.
 - Separate contest archive for Codeforces, CodeChef and LeetCode.
 - Codeforces division filters (Div. 1–4 and combined rounds where identified).
 - Search, bookmarks and local solved-problem tracking.
-- Codeforces problem index filtered to contests in the archive window, with tags and ratings.
+- Unified problem index across Codeforces, CodeChef and LeetCode, with platform filters, tags and available difficulty/rating metadata.
 - Browser notifications for newly detected upcoming contests (requires permission and an open site session).
 - Daily GitHub Actions sync at 01:17 UTC, plus manual workflow dispatch.
 
@@ -25,10 +25,10 @@ node scripts/sync.mjs
 
 The sync job uses:
 - Codeforces `contest.list` and `problemset.problems` APIs.
-- CodeChef's live/upcoming contest endpoint and paginated `api/list/contests/past` endpoint.
-- LeetCode GraphQL `allContests` query, with a GET fallback if POST is blocked.
+- CodeChef contest feeds plus the paginated public `api/list/problems` catalogue.
+- LeetCode GraphQL contest feed and paginated public problemset query (cached into the static dataset once per sync).
 
-The generated `public/data/contests.json` includes the sync timestamp, archive start date, per-platform counts and source warnings. The workflow does not fabricate contest records; inspect `sourceErrors` if a provider is unavailable.
+The generated `public/data/contests.json` and `public/data/problems.json` include matching sync timestamps and per-platform counts. A sync is rejected unless all three contest feeds and all three problem feeds are non-empty and fully paginated; existing known-good datasets are preserved on provider failure.
 
 ## Deploy
 Import this repository into Vercel. Framework: Vite; build command: `npm run build`; output directory: `dist`. No environment variables are required for the static frontend.
