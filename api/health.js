@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
   // Cache the shared GitHub status response at Vercel's edge to avoid
   // every visitor consuming the repository's unauthenticated API quota.
-  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=600');
+  res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=30');
   try {
     const response = await fetch(
       'https://api.github.com/repos/Chakaliprakash/DSA-Contest-Arena/actions/runs?per_page=10',
@@ -30,6 +30,8 @@ export default async function handler(req, res) {
         id: run.id,
         status: run.status,
         conclusion: run.conclusion,
+        event: run.event,
+        actor: run.actor?.login || '',
         created_at: run.created_at,
         html_url: run.html_url,
         head_commit: run.head_commit?.message || '',
