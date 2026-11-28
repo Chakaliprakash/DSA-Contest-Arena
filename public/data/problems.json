@@ -1,5 +1,5 @@
 {
-  "lastSynced": "2026-11-27T03:08:16.157Z",
+  "lastSynced": "2026-11-28T10:11:42.069Z",
   "rangeStart": "2026-08-01T00:00:00Z",
   "problems": [
     {
@@ -217525,6 +217525,20 @@
       "url": "https://codeforces.com/problemset/problem/2283/D"
     },
     {
+      "id": "cf-2292-E-Blush",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Blush",
+      "index": "E",
+      "rating": null,
+      "tags": [
+        "binary search",
+        "bitmasks",
+        "math"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/E"
+    },
+    {
       "id": "cf-2290-C-Books on a Shelf",
       "platform": "Codeforces",
       "contestId": "2290",
@@ -218090,6 +218104,19 @@
       "url": "https://codeforces.com/problemset/problem/2267/B"
     },
     {
+      "id": "cf-2292-C-Finding Shapes in the Clouds",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Finding Shapes in the Clouds",
+      "index": "C",
+      "rating": null,
+      "tags": [
+        "constructive algorithms",
+        "strings"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/C"
+    },
+    {
       "id": "cf-2262-A1-Floor of MEX (Easy Version)",
       "platform": "Codeforces",
       "contestId": "2262",
@@ -218241,6 +218268,19 @@
         "strings"
       ],
       "url": "https://codeforces.com/problemset/problem/2276/E"
+    },
+    {
+      "id": "cf-2292-B-Grapefruit Juice",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Grapefruit Juice",
+      "index": "B",
+      "rating": null,
+      "tags": [
+        "greedy",
+        "sortings"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/B"
     },
     {
       "id": "cf-2271-G-Grid Filling",
@@ -218845,6 +218885,20 @@
       "url": "https://codeforces.com/problemset/problem/2259/B"
     },
     {
+      "id": "cf-2292-H-Missed Call",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Missed Call",
+      "index": "H",
+      "rating": null,
+      "tags": [
+        "dp",
+        "graphs",
+        "trees"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/H"
+    },
+    {
       "id": "cf-2266-G-Modular Tree",
       "platform": "Codeforces",
       "contestId": "2266",
@@ -219193,6 +219247,34 @@
         "trees"
       ],
       "url": "https://codeforces.com/problemset/problem/2271/H2"
+    },
+    {
+      "id": "cf-2292-A-Picnic for Two",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Picnic for Two",
+      "index": "A",
+      "rating": null,
+      "tags": [
+        "implementation",
+        "math"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/A"
+    },
+    {
+      "id": "cf-2292-F-Pink-Black",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Pink-Black",
+      "index": "F",
+      "rating": null,
+      "tags": [
+        "constructive algorithms",
+        "dfs and similar",
+        "dsu",
+        "graphs"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/F"
     },
     {
       "id": "cf-2261-F1-Plegma II: Ask Me Any Cell (Ea",
@@ -219651,6 +219733,19 @@
       "url": "https://codeforces.com/problemset/problem/2273/E"
     },
     {
+      "id": "cf-2292-G-Soft Memories",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Soft Memories",
+      "index": "G",
+      "rating": null,
+      "tags": [
+        "greedy",
+        "sortings"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/G"
+    },
+    {
       "id": "cf-2260-G-Sortable Permutations",
       "platform": "Codeforces",
       "contestId": "2260",
@@ -220026,6 +220121,19 @@
         "strings"
       ],
       "url": "https://codeforces.com/problemset/problem/2267/A"
+    },
+    {
+      "id": "cf-2292-D-Unexpected Precipitation",
+      "platform": "Codeforces",
+      "contestId": "2292",
+      "name": "Unexpected Precipitation",
+      "index": "D",
+      "rating": null,
+      "tags": [
+        "dp",
+        "games"
+      ],
+      "url": "https://codeforces.com/problemset/problem/2292/D"
     },
     {
       "id": "cf-2275-C-Unrequited Love",
@@ -282647,7 +282755,7 @@
   ],
   "sourceCounts": {
     "CodeChef": 21710,
-    "Codeforces": 221,
+    "Codeforces": 229,
     "LeetCode": 4124
   }
 }

@@ -1,7 +1,37 @@
 {
-  "lastSynced": "2026-11-27T03:08:16.157Z",
+  "lastSynced": "2026-11-28T10:11:42.069Z",
   "rangeStart": "2026-08-01T00:00:00Z",
   "contests": [
+    {
+      "id": "cc-START271",
+      "platform": "CodeChef",
+      "name": "Starters 271",
+      "startTimeSeconds": 1798641000,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "",
+      "url": "https://www.codechef.com/START271"
+    },
+    {
+      "id": "cc-START270",
+      "platform": "CodeChef",
+      "name": "Starters 270",
+      "startTimeSeconds": 1798036200,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "",
+      "url": "https://www.codechef.com/START270"
+    },
+    {
+      "id": "cc-START269",
+      "platform": "CodeChef",
+      "name": "Starters 269",
+      "startTimeSeconds": 1797431400,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "",
+      "url": "https://www.codechef.com/START269"
+    },
     {
       "id": "2293",
       "platform": "Codeforces",
@@ -11,6 +41,16 @@
       "durationSeconds": 7200,
       "division": "Div. 2",
       "url": "https://codeforces.com/contest/2293"
+    },
+    {
+      "id": "cc-START268",
+      "platform": "CodeChef",
+      "name": "Starters 268",
+      "startTimeSeconds": 1796826600,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "",
+      "url": "https://www.codechef.com/START268"
     },
     {
       "id": "2282",
@@ -53,6 +93,16 @@
       "url": "https://leetcode.com/contest/biweekly-contest-197/"
     },
     {
+      "id": "cc-START267",
+      "platform": "CodeChef",
+      "name": "Starters 267",
+      "startTimeSeconds": 1796221800,
+      "phase": "BEFORE",
+      "durationSeconds": 7200,
+      "division": "",
+      "url": "https://www.codechef.com/START267"
+    },
+    {
       "id": "2286",
       "platform": "Codeforces",
       "name": "Kotlin Heroes: Practice 15",
@@ -77,7 +127,7 @@
       "platform": "Codeforces",
       "name": "Codeforces Round 1138 (Div. 3)",
       "startTimeSeconds": 1795790100,
-      "phase": "BEFORE",
+      "phase": "FINISHED",
       "durationSeconds": 8100,
       "division": "Div. 3",
       "url": "https://codeforces.com/contest/2292"
@@ -1164,9 +1214,9 @@
     }
   ],
   "sourceCounts": {
+    "CodeChef": 51,
     "Codeforces": 41,
-    "LeetCode": 29,
-    "CodeChef": 46
+    "LeetCode": 29
   },
   "sourceErrors": []
 }
